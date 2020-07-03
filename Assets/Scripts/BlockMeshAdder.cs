@@ -4,9 +4,11 @@ using System;
 //Made by Adrian 'Aheradin' Armesto
 //Date of Creation 24/02/2020 22:52
 
-namespace PokeUtility {
+namespace PokeUtility
+{
 
-	public class BlockMeshAdder : MonoBehaviour {
+	public class BlockMeshAdder : MonoBehaviour
+    {
 
         #region Variables
 
@@ -71,6 +73,8 @@ namespace PokeUtility {
             CombineInstance[] combine = new CombineInstance[meshFilters.Length];
             Destroy(this.gameObject.GetComponent<MeshCollider>());
 
+            Vector2[] oldMeshUVs = transform.GetComponent<MeshFilter>().mesh.uv;
+
             int i = 0;
             while (i < meshFilters.Length)
             {
@@ -82,6 +86,48 @@ namespace PokeUtility {
 
             Mesh mesh = new Mesh();
             mesh.CombineMeshes(combine, true);
+
+            //make new UV array
+            Vector2[] newMeshUVs = new Vector2[oldMeshUVs.Length + 24];
+
+            for (i = 0; i < oldMeshUVs.Length; i++)
+                newMeshUVs[i] = oldMeshUVs[i];
+
+            BlockUVSetter suv = block.GetComponent<BlockUVSetter>();
+
+            float tilePercentage = 1 / suv.TileSize;
+            float uMin = tilePercentage * suv.TilePosX;
+            float uMax = tilePercentage * (suv.TilePosX + 1);
+            float vMin = tilePercentage * suv.TilePosY;
+            float vMax = tilePercentage * (suv.TilePosY + 1);
+
+            newMeshUVs[newMeshUVs.Length - 24] = new Vector2(uMin, vMin);
+            newMeshUVs[newMeshUVs.Length - 23] = new Vector2(uMax, vMin);
+            newMeshUVs[newMeshUVs.Length - 22] = new Vector2(uMin, vMax);
+            newMeshUVs[newMeshUVs.Length - 21] = new Vector2(uMax, vMax);
+            newMeshUVs[newMeshUVs.Length - 20] = new Vector2(uMin, vMax);
+            newMeshUVs[newMeshUVs.Length - 19] = new Vector2(uMax, vMax);
+            newMeshUVs[newMeshUVs.Length - 18] = new Vector2(uMin, vMax);
+            newMeshUVs[newMeshUVs.Length - 17] = new Vector2(uMax, vMax);
+            newMeshUVs[newMeshUVs.Length - 16] = new Vector2(uMin, vMin);
+            newMeshUVs[newMeshUVs.Length - 15] = new Vector2(uMax, vMin);
+            newMeshUVs[newMeshUVs.Length - 14] = new Vector2(uMin, vMin);
+            newMeshUVs[newMeshUVs.Length - 13] = new Vector2(uMax, vMin);
+            newMeshUVs[newMeshUVs.Length - 12] = new Vector2(uMin, vMin);
+            newMeshUVs[newMeshUVs.Length - 11] = new Vector2(uMin, vMax);
+            newMeshUVs[newMeshUVs.Length - 10] = new Vector2(uMax, vMax);
+            newMeshUVs[newMeshUVs.Length - 9] = new Vector2(uMax, vMin);
+            newMeshUVs[newMeshUVs.Length - 8] = new Vector2(uMin, vMin);
+            newMeshUVs[newMeshUVs.Length - 7] = new Vector2(uMin, vMax);
+            newMeshUVs[newMeshUVs.Length - 6] = new Vector2(uMax, vMax);
+            newMeshUVs[newMeshUVs.Length - 5] = new Vector2(uMax, vMin);
+            newMeshUVs[newMeshUVs.Length - 4] = new Vector2(uMin, vMin);
+            newMeshUVs[newMeshUVs.Length - 3] = new Vector2(uMin, vMax);
+            newMeshUVs[newMeshUVs.Length - 2] = new Vector2(uMax, vMax);
+            newMeshUVs[newMeshUVs.Length - 1] = new Vector2(uMax, vMin);
+
+            mesh.uv = newMeshUVs;
+
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
             mesh.Optimize();
